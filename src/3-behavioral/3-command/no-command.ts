@@ -16,10 +16,10 @@ export class EnrolmentController {
   private service: EnrolmentService = new EnrolmentService();
 
   // ! 😱 tight coupling invoker and receiver
-  dispatchEnrollment(activity: string, participant: string): void {
+  enroll(activity: string, participant: string): void {
     this.service.enroll(activity, participant);
   }
-  dispatchUnEnrollment(activity: string, participant: string): void {
+  unEnroll(activity: string, participant: string): void {
     this.service.unenroll(activity, participant);
   }
 }
