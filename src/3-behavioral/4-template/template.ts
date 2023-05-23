@@ -20,7 +20,7 @@ export abstract class BusinessTemplate implements BusinessProcess {
       return businessResult;
     } catch (error) {
       // * 😏 hard coded common step
-      console.log("ℹ️ 😵‍💫 error: " + error);
+      console.error("ℹ️ 😵‍💫 error: " + error);
       return "";
     }
   }

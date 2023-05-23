@@ -45,7 +45,7 @@ export class CancellingState implements ActivityEnrollmentState {
 }
 
 export class ActivityEnrollment {
-  private state: ActivityEnrollmentState;
+  private state: ActivityEnrollmentState = new PayingState(0);
 
   changeState(state: ActivityEnrollmentState): void {
     // ToDo: validate state transition

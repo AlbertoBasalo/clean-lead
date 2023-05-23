@@ -13,7 +13,7 @@ export class EnrollActivity {
       console.warn("📧 Activity booked " + businessResult);
       console.log("ℹ️  notification sent");
     } catch (error) {
-      console.log("ℹ️ 😵‍💫 error: " + error);
+      console.error("ℹ️ 😵‍💫 error: " + error);
     }
     return businessResult;
   }
@@ -36,7 +36,7 @@ export class CancelActivity {
       console.warn("✅ Done " + businessResult);
       console.log("ℹ️  notification sent");
     } catch (error) {
-      console.log("ℹ️ 😵‍💫 error: " + error);
+      console.error("ℹ️ 😵‍💫 error: " + error);
     }
     return businessResult;
   }

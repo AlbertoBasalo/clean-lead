@@ -3,6 +3,7 @@
 // * 😏 Command interface
 export interface Command {
   execute(activity: string, participant: string): void;
+  // ToDo: create a type to have only one argument
   // ToDo: add a unDo reDo methods
 }
 
