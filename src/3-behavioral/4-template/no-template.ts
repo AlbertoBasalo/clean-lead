@@ -7,7 +7,7 @@ export class EnrollActivity {
     try {
       console.log("ℹ️  transaction started");
       const paymentResult = "💸  Paying Activity to " + destination;
-      console.log("ℹ️  transaction processed");
+      console.warn("💸  transaction processed");
       businessResult = "✍🏼 Booking Activity " + paymentResult;
       console.log("ℹ️  action done");
       console.warn("📧 Activity booked " + businessResult);
@@ -30,7 +30,7 @@ export class CancelActivity {
     try {
       console.log("ℹ️  transaction started");
       const paymentResult = "🤑  Refunding Activity to " + destination;
-      console.log("ℹ️  transaction processed");
+      console.warn("💸 transaction processed");
       businessResult = "😭  Cancelling Activity " + paymentResult;
       console.log("ℹ️  action done");
       console.warn("✅ Done " + businessResult);
