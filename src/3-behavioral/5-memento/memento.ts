@@ -2,88 +2,74 @@
 export class Activity {
   private title: string;
   private attendeesRepository: string[] = [];
-  private places: number;
+  private places: number = 0;
   private reservedPlaces: number = 0;
-  private status: "pending" | "confirmed" = "pending";
   private minimumAttendees: number = 3;
-  public readonly isConfirmed: boolean = this.status === "confirmed";
-
-  private memento: ActivityMemento | null = null;
+  private status: "pending" | "confirmed" | "cancelled" = "pending";
+  public isConfirmed: boolean = false;
+  public readonly availablePlaces: number = this.places - this.reservedPlaces;
 
   constructor(title: string, places: number) {
     this.title = title;
     this.places = places;
   }
 
-  get availablePlaces(): number {
-    return this.places - this.reservedPlaces;
-  }
   enroll(name: string): void {
-    this.saveState(); // * 😏 allows to undo this action
-    if (this.attendeesRepository.length >= this.places) {
+    if (this.status === "cancelled") throw new Error("Cannot enroll a cancelled activity");
+    if (this.reservedPlaces >= this.places) {
       throw new Error("No more places available on " + this.title);
     }
     this.attendeesRepository.push(name);
     this.reservedPlaces++;
     if (this.reservedPlaces >= this.minimumAttendees) {
       this.status = "confirmed";
+      this.isConfirmed = true;
     }
   }
-  cancelLastCommand(): void {
-    this.restoreState();
+  unenroll(): void {
+    if (this.attendeesRepository.length === 0) {
+      return;
+    }
+    this.attendeesRepository.pop();
+    this.reservedPlaces--;
+    if (this.reservedPlaces < this.minimumAttendees) {
+      this.status = "pending";
+      this.isConfirmed = false;
+    }
   }
-  saveState() {
-    // * 😏 similar to a snapshot or prototype
-    const state: ActivityState = {
+  cancel(): void {
+    this.status = "cancelled";
+    this.isConfirmed = false;
+  }
+
+  takeSnapshot(): ActivityMemento {
+    // * 😏 similar to a prototype
+    // * 😏 get private values
+    const memento: ActivityMemento = {
       title: this.title,
       attendees: [...this.attendeesRepository],
       places: this.places,
+      status: this.status,
     };
-    // * 😏 the state is now serializable
-    this.memento = new ActivityMemento(state);
+    return memento;
   }
-  restoreState(): void {
+  restore(memento: ActivityMemento): void {
     // * 😏 similar to builder
-    if (!this.memento) {
-      return;
-    }
-    const state = this.memento.restoreState();
     // * 😏 set private values
-    this.title = state.title;
-    this.attendeesRepository = state.attendees;
-    this.places = state.places;
-    // * 😏 calculate private values
-    this.reservedPlaces = state.attendees.length;
-    this.status = this.reservedPlaces >= 3 ? "confirmed" : "pending";
+    this.title = memento.title;
+    this.attendeesRepository = memento.attendees;
+    this.places = memento.places;
+    this.status = memento.status;
+    // * 😏 set calculated values
+    this.reservedPlaces = memento.attendees.length;
+    this.isConfirmed = this.status != "cancelled" && this.reservedPlaces >= 3;
   }
 }
 
-type ActivityState = {
+// * 😏 public properties for required memento data
+type ActivityMemento = {
   title: string;
   attendees: string[];
   places: number;
+  status: "pending" | "confirmed" | "cancelled";
 };
-
-class ActivityMemento {
-  private title: string;
-  private attendees: string[];
-  private places: number;
-
-  // * 😏 allows undo operations deferred in time
-
-  constructor(state: ActivityState) {
-    this.title = state.title;
-    this.attendees = state.attendees;
-    this.places = state.places;
-    // * 😏 Could also be a JSON.stringify() of the object or saving to a file
-  }
-
-  restoreState(): ActivityState {
-    // 😏 Could also be a JSON.parse() of the string or reading from a file
-    return {
-      title: this.title,
-      attendees: this.attendees,
-      places: this.places,
-    };
-  }
-}

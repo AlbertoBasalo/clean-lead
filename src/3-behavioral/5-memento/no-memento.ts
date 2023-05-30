@@ -2,24 +2,24 @@
 
 // ! 😱 want to save state of an object to undo operations deferred in time
 export class Activity {
+  // ! 😱 private data no serializable
   private title: string;
   private attendeesRepository: string[] = [];
-  private places: number;
+  private places: number = 0;
   private reservedPlaces: number = 0;
-  private status: "pending" | "confirmed" = "pending";
   private minimumAttendees: number = 3;
-  public readonly isConfirmed: boolean = this.status === "confirmed";
+  // ! 😱 redundant or calculated data
+  private status: "pending" | "confirmed" | "cancelled" = "pending";
+  public isConfirmed: boolean = false;
+  public readonly availablePlaces: number = this.places - this.reservedPlaces;
 
   constructor(title: string, places: number) {
     this.title = title;
     this.places = places;
   }
 
-  get availablePlaces(): number {
-    return this.places - this.reservedPlaces;
-  }
-
   enroll(name: string): void {
+    if (this.status === "cancelled") throw new Error("Cannot enroll a cancelled activity");
     if (this.reservedPlaces >= this.places) {
       throw new Error("No more places available on " + this.title);
     }
@@ -27,10 +27,11 @@ export class Activity {
     this.reservedPlaces++;
     if (this.reservedPlaces >= this.minimumAttendees) {
       this.status = "confirmed";
+      this.isConfirmed = true;
     }
   }
-  cancel(): void {
-    // ! 😱 un do enrolment cancel logic is needed here
+  unenroll(): void {
+    // ! 😱 unenrolled logic is needed here
     if (this.attendeesRepository.length === 0) {
       return;
     }
@@ -38,6 +39,11 @@ export class Activity {
     this.reservedPlaces--;
     if (this.reservedPlaces < this.minimumAttendees) {
       this.status = "pending";
+      this.isConfirmed = false;
     }
+  }
+  cancel(): void {
+    this.status = "cancelled";
+    this.isConfirmed = false;
   }
 }
