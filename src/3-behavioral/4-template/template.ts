@@ -6,28 +6,33 @@ export interface BusinessProcess {
 
 export abstract class BusinessTemplate implements BusinessProcess {
   public execute(payload: string): string {
+    this.validation(payload);
     try {
       // * 😏 hard coded instrumentation steps
-      console.log("ℹ️  transaction started");
+      console.log("#️⃣ transaction started");
       // * 😏 mandatory steps
-      const paymentResult = this.processTransaction(payload);
-      console.log("ℹ️  transaction processed");
+      const paymentResult = this.paymentsTransaction(payload);
       const businessResult = this.doBusinessAction(paymentResult);
-      console.log("ℹ️  action done");
+      console.log("#️⃣ action done");
       // * 😏 optional step with default implementation if not overridden
       this.sendNotification(businessResult);
-      console.log("ℹ️  notification sent");
+      console.log("#️⃣ notification sent");
       return businessResult;
     } catch (error) {
       // * 😏 hard coded common step
-      console.error("ℹ️ 😵‍💫 error: " + error);
+      console.error("#️⃣ 😵‍💫 error: " + error);
       return "";
     }
   }
-  // * 😏 mandatory steps
-  protected abstract processTransaction(payload: string): string;
+  // * 😏 mandatory steps to be implemented by subclasses
+  protected abstract paymentsTransaction(payload: string): string;
   protected abstract doBusinessAction(payload: string): string;
   // * 😏 optional step with default implementation if not overridden
+  protected validation(payload: string): void {
+    if (payload === "") {
+      throw new Error("Activity name is required");
+    }
+  }
   protected sendNotification(payload = ""): void {
     console.warn("✅ Done " + payload);
   }
@@ -36,8 +41,8 @@ export abstract class BusinessTemplate implements BusinessProcess {
 // * 😏 custom implementation steps while enrollment or cancellation
 
 export class EnrollActivity extends BusinessTemplate {
-  protected processTransaction(destination: string): string {
-    return "💸  Paying Activity to " + destination;
+  protected paymentsTransaction(destination: string): string {
+    return "🤑  Paying Activity to " + destination;
   }
   protected doBusinessAction(payment: string): string {
     return "✍🏼 Booking Activity " + payment;
@@ -49,8 +54,8 @@ export class EnrollActivity extends BusinessTemplate {
 }
 
 export class CancelActivity extends BusinessTemplate {
-  protected processTransaction(destination: string): string {
-    return "🤑  Refunding Activity " + destination;
+  protected paymentsTransaction(destination: string): string {
+    return "💸  Refunding Activity " + destination;
   }
   protected override doBusinessAction(refund: string): string {
     return "😭  Cancelling Activity " + refund;

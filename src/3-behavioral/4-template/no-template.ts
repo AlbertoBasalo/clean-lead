@@ -1,55 +1,53 @@
-// ! ❌ Bad example not using a a template
+// ! ❌ Bad example of not using a template
 
-export class EnrollActivity {
-  public execute(destination: string): string {
-    // ! 😱 repeated steps
+export class EnrollmentService {
+  public enrol(activity: string): string {
+    if (activity === "") {
+      throw new Error("Activity name is required");
+    }
     let businessResult = "";
     try {
-      console.log("ℹ️  transaction started");
-      const paymentResult = "💸  Paying Activity to " + destination;
-      console.warn("💸  transaction processed");
+      console.log("#️⃣ transaction started");
+      const paymentResult = "🤑 Paying Activity " + activity;
       businessResult = "✍🏼 Booking Activity " + paymentResult;
-      console.log("ℹ️  action done");
-      console.warn("📧 Activity booked " + businessResult);
-      console.log("ℹ️  notification sent");
+      console.log("#️⃣ action done");
+      const notification = "📧 Activity booked " + businessResult;
+      console.log("#️⃣ notification sent");
     } catch (error) {
-      console.error("ℹ️ 😵‍💫 error: " + error);
+      console.error("#️⃣ 😵‍💫 error: " + error);
     }
     return businessResult;
   }
-}
 
-// ToDo: cancel enrollment
-
-// ToDo: confirm activity
-
-export class CancelActivity {
-  public execute(destination: string): string {
-    // ! 😱 repeated steps
+  // ! 😱 repeated steps
+  public unenroll(activity: string): string {
+    if (activity === "") {
+      throw new Error("Activity name is required");
+    }
     let businessResult = "";
     try {
-      console.log("ℹ️  transaction started");
-      const paymentResult = "🤑  Refunding Activity to " + destination;
-      console.warn("💸 transaction processed");
-      businessResult = "😭  Cancelling Activity " + paymentResult;
-      console.log("ℹ️  action done");
-      console.warn("✅ Done " + businessResult);
-      console.log("ℹ️  notification sent");
+      console.log("#️⃣ transaction started");
+      const refundResult = "💸  Refunding Activity " + activity;
+      businessResult = "😭  Unenrolled Activity " + refundResult;
+      console.log("#️⃣ action done");
+      const notification = "📧 Activity booked " + businessResult;
+      console.log("#️⃣ notification sent");
     } catch (error) {
-      console.error("ℹ️ 😵‍💫 error: " + error);
+      console.error("#️⃣ 😵‍💫 error: " + error);
     }
     return businessResult;
   }
+  // ToDo: confirm activity
+  // ToDo: cancel activity
 }
 
-export class Client {
-  private enrolling = new EnrollActivity();
-  private cancel = new CancelActivity();
+export class Application {
+  private service = new EnrollmentService();
   public run(): void {
-    this.enrolling.execute("Snorkeling on the Red Sea");
-    this.cancel.execute("Snorkeling on the Red Sea");
+    this.service.enrol("Snorkeling on the Red Sea");
+    this.service.unenroll("Snorkeling on the Red Sea");
   }
 }
 
-const client = new Client();
-client.run();
+const application = new Application();
+application.run();
