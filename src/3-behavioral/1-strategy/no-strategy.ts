@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-// ! ❌ Bad example not using a strategy
+// ! ❌ Bad example of not using a strategy
 
 export type LogLevel = "info" | "debug" | "warn" | "error";
 export type LogEntry = { level: LogLevel; message: string };

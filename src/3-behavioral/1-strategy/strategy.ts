@@ -42,6 +42,8 @@ export class ErrorLogStrategy implements LogStrategy {
   }
 }
 
+// *  😏 also the context implements the contract
+
 export class Logger implements LogStrategy {
   // *  😏 a map of strategies (implicit factory)
   static strategies = new Map<LogLevel, LogStrategy>([
@@ -63,11 +65,12 @@ export class Logger implements LogStrategy {
 }
 
 class App {
+  // *  😏 no body knows there are strategies
   private logger = new Logger();
 
   public run() {
     this.logger.log({ level: "info", message: "App started!" });
-    // *  😏 change the strategy map at runtime
+    // *  😏 but, if you know, you change the strategy map at runtime
     Logger.strategies.set("debug", new DebugLogStrategy());
     this.logger.log({ level: "debug", message: "I was here" });
     this.logger.log({ level: "warn", message: "Heads up" });
